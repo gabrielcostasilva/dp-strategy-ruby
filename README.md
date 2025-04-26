@@ -1,39 +1,48 @@
-# Strategy
+# Strategy Design Pattern Example - in Ruby!
+Design patterns are great to exercise OO principles. This is particularly useful when you are learning a new programming language. 
 
-TODO: Delete this and the text below, and describe your gem
+Although this project may be limited, it highlights the benefit of using the Strategy DP in a real-world scenario (simplified here, of course).
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/strategy`. To experiment with that code, run `bin/console` for an interactive prompt.
+> To learn more about the Strategy Design Pattern, check out also [the Java version](https://github.com/gabrielcostasilva/dp-strategy.git).
 
-## Installation
+## Project Overview
+The [`Strategy` module](./lib/strategy.rb) holds a module and three classes. The `IValidation` module sets the _contract_ (`validate()` method) for the strategy classes. In this example, it does not have a default implementation.
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+`DriverLicenseValidation` and `PersonalDocumentValidation` implement the `IValidation` module. They are responsible for validating a driver's license and a personal document, respectively. Therefore, they implement specific algorithms and processes to validate the documents through the `validate()` method. 
 
-Install the gem and add to the application's Gemfile by executing:
+Finally, the `CustomerRegistration` class uses a particular implementation to validating a document (2). The implementation is set at runtime via _constructor_ (1), as the snippet below shows:
 
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+(...)
+  class CustomerRegistration
+    def initialize(strategy) #1
+      @strategy = strategy
+    end
+
+    def register
+      puts "Registering customer..."
+      @strategy.validate #2
+      puts "Customer registered successfully!"
+    end
+  end
+(...)
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+The [unit test](./spec/strategy_spec.rb) shows the Strategy usage in practice. But, the snippet below exemplifies the process:
 
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+(...)
+    let(:driver_license_validation) { Strategy::DriverLicenseValidation.new } #1
+(...)
+    it "registers a customer with driver license validation" do
+      registration = Strategy::CustomerRegistration.new(driver_license_validation) #2
+      expect { registration.register }.to output(
+        "Registering customer...\nValidating driver license...\nCustomer registered successfully!\n"
+      ).to_stdout #3
+    end
+(...)    
 ```
 
-## Usage
-
-TODO: Write usage instructions here
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/strategy.
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+1. Instantiates a validation _strategy_
+2. Sets the validation _strategy_ to be used
+3. Calls the validation
