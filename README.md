@@ -5,6 +5,8 @@ Although this project may be limited, it highlights the benefit of using the Str
 
 > To learn more about the Strategy Design Pattern, check out also [the Java version](https://github.com/gabrielcostasilva/dp-strategy.git).
 
+> You can also checkout another [Ruby example](https://github.com/gabrielcostasilva/dp-strategy-ruby-billing.git). 
+
 ## Project Overview
 The [`Strategy` module](./lib/strategy.rb) holds a module and three classes. The `IValidation` module sets the _contract_ (`validate()` method) for the strategy classes. In this example, it does not have a default implementation.
 
